@@ -5,6 +5,7 @@ export default async function RouteLayout(props: Readonly<LayoutParams<{ }>>) {
     return (
         <div className="h-full">
             <Headers/>
+            {props.children}
         </div>
     );
 }
