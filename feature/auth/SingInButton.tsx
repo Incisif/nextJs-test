@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/auth/auth";
+import {LogIn} from "lucide-react";
 
 export const SignInButton = () => {
   return (
@@ -12,6 +13,7 @@ export const SignInButton = () => {
           await signIn();
         }}
       >
+        <LogIn size={16} className="mr-2" />
         Sign In
       </Button>
     </form>
