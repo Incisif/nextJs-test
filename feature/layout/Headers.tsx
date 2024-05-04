@@ -4,7 +4,7 @@ import { Layout } from "@/components/layout";
 import { ModeToggle } from "../theme/ModeToggle";
 export const Headers = async () => {
   return (
-    <header className="w-full border-b border-border py-1">
+    <header className="w-full border-b border-border ">
       <Layout className="flex items-center gap-4">
         <div className="flex-1">
           <Image src="/icon.png" width={32} height={32} alt="Page Icon" />
