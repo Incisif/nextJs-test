@@ -1,21 +1,29 @@
 "use client";
 
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/feature/theme/ThemeProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 import { PropsWithChildren } from "react";
-import { Toaster } from "sonner";
+
+const queryClient = new QueryClient();
 
 export type ProvidersProps = PropsWithChildren;
 
-export function Providers(props: Readonly<ProvidersProps>) {
+export const Providers = (props: ProvidersProps) => {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <Toaster />
-      {props.children}
-    </ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <QueryClientProvider client={queryClient}>
+          <Toaster />
+          {props.children}
+        </QueryClientProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
-}
+};
