@@ -9,3 +9,6 @@ export const LayoutTitle = twx.h1((props) => [
   "text-3xl font-bold",
   props.className,
 ]);
+export const LayoutDescription = twx.p((props) => [
+  `text-lg text-muted-foreground`,
+]);

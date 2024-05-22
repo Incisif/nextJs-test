@@ -26,12 +26,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { createProductAction } from "./product.action";
+import { createProductAction, editProductAction } from "./product.action";
+
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { uploadImageAction } from "@/feature/upload/upload.action";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { AvatarFallback, Avatar } from "@/components/ui/avatar";
 
+import { Input } from "@/components/ui/input";
 export type ProductFormProps = {
   defaultValues?: ProductType;
+  productId?: string;
 };
 
 export const ProductForm = (props: ProductFormProps) => {
@@ -45,8 +51,9 @@ export const ProductForm = (props: ProductFormProps) => {
 
   const mutation = useMutation({
     mutationFn: async (values: ProductType) => {
-      console.log("Submitting form values:", values);
-      const { data, serverError } = await createProductAction(values);
+      const { data, serverError } = isCreate
+        ? await createProductAction(values)
+        : await editProductAction({ id: props.productId ?? "-", data: values });
 
       if (serverError || !data) {
         toast.error(serverError);
@@ -58,7 +65,19 @@ export const ProductForm = (props: ProductFormProps) => {
       router.push(`/products/${data?.id}`);
     },
   });
-
+  const submitImage = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.set("file", file);
+      const { data, serverError } = await uploadImageAction(formData);
+      if (serverError || !data) {
+        toast.error(serverError);
+        return;
+      }
+      const url = data.url;
+      form.setValue("image", url);
+    },
+  });
   return (
     <Card>
       <CardHeader>
@@ -113,7 +132,57 @@ export const ProductForm = (props: ProductFormProps) => {
                     }}
                   />
                 </FormControl>
-                <FormDescription>The name of the product.</FormDescription>
+                <FormDescription>
+                  The slug is used in the URL of the review page
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Image</FormLabel>
+
+                <div className="flex items-center gap-4">
+                  <FormControl className="flex-1">
+                    <Input
+                      type="file"
+                      placeholder="iPhone 15"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+
+                        if (!file) {
+                          return;
+                        }
+
+                        if (file.size > 1024 * 1024) {
+                          toast.error("File is too big");
+                          return;
+                        }
+
+                        if (!file.type.includes("image")) {
+                          toast.error("File is not an image");
+                          return;
+                        }
+
+                        submitImage.mutate(file);
+                      }}
+                    />
+                  </FormControl>
+
+                  {field.value ? (
+                    <Avatar className="rounded-sm">
+                      <AvatarFallback>{field.value[0]}</AvatarFallback>
+                      <AvatarImage src={field.value} />
+                    </Avatar>
+                  ) : null}
+                </div>
+                <FormDescription>
+                 The image of the product.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

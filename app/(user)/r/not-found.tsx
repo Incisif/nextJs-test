@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { SignInButton } from "@/feature/auth/SingInButton";
 import { Layout } from "@/components/layout";
 
@@ -9,9 +15,11 @@ export default function RouteError() {
     <Layout>
       <Card>
         <CardHeader>
-          <CardTitle>
-            Sorry, you need to be logged in to view this page.
-          </CardTitle>
+          <CardTitle>Product not found</CardTitle>
+          <CardDescription>
+            The product you are looking for does not exist or you do not have
+            permission to view it.
+          </CardDescription>
         </CardHeader>
         <CardFooter>
           <SignInButton />
